@@ -3,35 +3,54 @@ using Photon.Pun;
 
 public class VRAvatarController : MonoBehaviourPun
 {
-    // The bones of your character model
-    public Transform headBone;
-    public Transform leftHandBone;
-    public Transform rightHandBone;
+    [Header("Head")]
+    public Transform AvatarHead;
+    public Transform VRHead;
+    public Vector3 headOffset;
+    public Vector3 headRotation; // Euler angles offset for the head
 
-    // The VR references assigned by the Network Manager
-    public Transform vrHead;
-    public Transform vrLeftController;
-    public Transform vrRightController;
+    [Header("Left Hand")]
+    public Transform AvatarLeftHand;
+    public Transform VRLeftHand;
+    public Vector3 leftHandOffset;
+    public Vector3 leftHandRotation; // Euler angles offset for the left hand
+
+    [Header("Right Hand")]
+    public Transform AvatarRightHand;
+    public Transform VRRightHand;
+    public Vector3 rightHandOffset;
+    public Vector3 rightHandRotation; // Euler angles offset for the right hand
+
+    [Header("Body")]
+    public Transform AvatarBody;
+    public Vector3 bodyOffset;
 
     void Update()
     {
         // Only control this avatar if it's the local player's
         if (!photonView.IsMine) return;
 
-        if (vrHead != null)
+        if (VRHead != null)
         {
-            headBone.position = vrHead.position;
-            headBone.rotation = vrHead.rotation;
+            AvatarHead.position = VRHead.TransformPoint(headOffset);
+            AvatarHead.rotation = VRHead.rotation * Quaternion.Euler(headRotation);
         }
-        if (vrLeftController != null)
+        if (VRLeftHand != null)
         {
-            leftHandBone.position = vrLeftController.position;
-            leftHandBone.rotation = vrLeftController.rotation;
+            AvatarLeftHand.position = VRLeftHand.TransformPoint(leftHandOffset);
+            AvatarLeftHand.rotation = VRLeftHand.rotation * Quaternion.Euler(leftHandRotation);
         }
-        if (vrRightController != null)
+        if (VRRightHand != null)
         {
-            rightHandBone.position = vrRightController.position;
-            rightHandBone.rotation = vrRightController.rotation;
+            AvatarRightHand.position = VRRightHand.TransformPoint(rightHandOffset);
+            AvatarRightHand.rotation = VRRightHand.rotation * Quaternion.Euler(rightHandRotation);
+        }
+        if (AvatarBody != null)
+        {
+            // The body is fixed relative to the parent's (this transform's) position plus a constant offset.
+            AvatarBody.position = transform.position + bodyOffset;
+            // Optionally, maintain a fixed body rotation (e.g., keep the body upright and aligned with the parent's Y rotation).
+            AvatarBody.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
         }
     }
 }

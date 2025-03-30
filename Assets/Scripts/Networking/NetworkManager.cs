@@ -24,7 +24,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public TextMeshProUGUI ConnectedText;// Will reference the ConnectedText object in the Menu
     public TextMeshProUGUI ConnectingText; // Will reference the ConnectingText object in the Menu
 
-    private string characterModelName = "Remy_IK_seated"; // The name of the character model prefab
+    private string characterModelName = "Avatar_Simple"; // The name of the character model prefab
     private bool isGoingOnline = false; // Flag to indicate if the game is transitioning from offline to online
     private string pendingRoomCode = ""; // Room code to join after going online
 
@@ -171,19 +171,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // Optionally, parent the avatar to the chair to keep it in place
         avatar.transform.parent = spawnPoint;
         avatar.tag = "Player";
+        
         avatar.GetComponent<PlayerManager>().chairPosition = chairManager.chairSpawnPoints.IndexOf(spawnPoint);
 
         // Now assign the VR rig references to the avatar's controller.
-        IKTargetFollowVRRig controller = avatar.GetComponent<IKTargetFollowVRRig>();
+        VRAvatarController controller = avatar.GetComponent<VRAvatarController>();
         if (controller != null)
         {
             // Assuming your NetworkManager already has these public references assigned in the Inspector
-            controller.head.vrTarget = vrHead;
-            controller.leftHand.vrTarget = vrLeftController;
-            controller.rightHand.vrTarget = vrRightController;
+            controller.VRHead = vrHead;
+            controller.VRLeftHand = vrLeftController;
+            controller.VRRightHand = vrRightController;
         }
         else { 
-            Debug.LogError("No IKTargetFollowVRRig component found on the avatar.");
+            Debug.LogError("No VRAvatarController component found on the avatar.");
         }
     }
 
