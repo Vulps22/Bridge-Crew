@@ -33,7 +33,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // Enable offline mode for testing without network connectivity
         PhotonNetwork.OfflineMode = true;
         setStatusMessage(ConnectionStatus.Offline);
-        PhotonNetwork.ConnectUsingSettings();
 
     }
 
@@ -140,6 +139,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Callback invoked when you successfully join a room.
     public override void OnJoinedRoom()
     {
+        Debug.Log("OnJoinedRoom() was called! Room: " + PhotonNetwork.CurrentRoom.Name);
+
         if (!PhotonNetwork.OfflineMode)
         {
             setStatusMessage(ConnectionStatus.Connected);
@@ -147,9 +148,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         else { 
             setStatusMessage(ConnectionStatus.Offline);
         }
-        Debug.Log("Joined room: " + PhotonNetwork.CurrentRoom.Name);
-
-        if(PhotonNetwork.IsMasterClient)
+       
+        if (PhotonNetwork.IsMasterClient)
         {
             
             chairManager.ResetChairs();
@@ -163,6 +163,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
 
         GameObject avatar = PhotonNetwork.Instantiate(characterModelName, spawnPoint.position, spawnPoint.rotation);
+        Debug.Log("===================================");
+        Debug.Log("Avatar instantiated at: " + spawnPoint.position + " with rotation: " + spawnPoint.rotation);
+        Debug.Log(avatar);
+        Debug.Log("===================================");
 
         // Optionally, parent the avatar to the chair to keep it in place
         avatar.transform.parent = spawnPoint;
@@ -177,6 +181,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             controller.head.vrTarget = vrHead;
             controller.leftHand.vrTarget = vrLeftController;
             controller.rightHand.vrTarget = vrRightController;
+        }
+        else { 
+            Debug.LogError("No IKTargetFollowVRRig component found on the avatar.");
         }
     }
 
